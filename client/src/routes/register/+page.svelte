@@ -33,7 +33,7 @@
 		<div class="flex-shrink-0 w-full max-w-sm shadow-lg card rounded-xl bg-base-100">
 			<div class="card-body">
 				<BackButton></BackButton>
-				<h2 class="text-xl font-bold">Registro de Nuevo Usuario</h2>
+				<h2 class="text-xl font-bold">Registro, Nuevo Usuario</h2>
 				<form
 					method="POST"
 					action="?/register"

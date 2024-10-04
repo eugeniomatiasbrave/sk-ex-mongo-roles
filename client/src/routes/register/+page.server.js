@@ -2,7 +2,6 @@ import { fail } from "@sveltejs/kit";
 
 const API_URL = process.env.VITE_API_URL;
 
-
 export const actions = {
 	register: async ({ request }) => {
 		const formData = await request.formData();
@@ -27,12 +26,15 @@ export const actions = {
 			body: JSON.stringify(body),
 		});
 
+		const data = await res.json();
+
 		if (!res.ok) {
-			return fail(res.status, await res.json());
+			return fail(res.status, data);
 		}
 
     return {
         status: 200,
         body: { message: "Register successful" }
 	};
-}};
+  }
+};

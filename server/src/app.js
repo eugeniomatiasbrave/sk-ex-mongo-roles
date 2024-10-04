@@ -1,6 +1,7 @@
 import express from "express";
-import productsRouter from "./routes/products.router.js";
+import SessionsRouter from './routes/SessionsRouter.js';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser'; // instalar cookie-parser
 import config from './config/config.js';
 
 const app = express();
@@ -13,4 +14,5 @@ app.listen(PORT, () => {
 });
 
 app.use(express.json()); 
-app.use('/api/products', productsRouter);
+app.use(cookieParser());
+app.use('/api/sessions', SessionsRouter);
