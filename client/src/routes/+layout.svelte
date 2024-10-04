@@ -1,14 +1,16 @@
 <script>
 	import "../app.css";
 	import Swal from 'sweetalert2';
-/*
+
 	export let data;
 	console.log(data);
+
 	let isLogedIn = false;
+
 	if (data.token) {
 		isLogedIn = true;
 	}
-*/
+
 	const confirmLogout = (event) => {
         event.preventDefault();
         Swal.fire({
@@ -30,18 +32,35 @@
 
 <nav class="navbar bg-base-100 border-b">
 	<div class="flex-1">
-		<a href="/" class="btn btn-ghost normal-case text-2xl text-info font-bold">ShiftSystem</a>
+	  <a href="/" class="btn btn-ghost normal-case text-2xl text-info font-bold">ShiftSystem</a>
 	</div>
 	<div class="flex-none">
-		<div class="dropdown dropdown-end">
-			<a href="/shift" class="btn btn-ghost text-info font-bold">Shift</a>
-			<a href="/login" class="btn btn-ghost text-info font-bold">Login</a>
-			<form method="POST" action="/logout" class="btn btn-ghost text-info font-bold" on:submit={confirmLogout}>
+	  <ul class="menu menu-horizontal px-1 py-1">
+		{#if isLogedIn === false}
+		  <li><a href="/info" class="btn btn-ghost text-info font-bold">Info</a></li>
+		  <li><a href="/login" class="btn btn-ghost text-info font-bold">Login</a></li>
+		{/if}
+		{#if isLogedIn === true}
+		<li>
+		  <details>
+			<summary class="btn-ghost text-info font-bold mt-1">Menu</summary>
+			<ul>
+			  <li>
+				<a href="/shift" class="btn btn-ghost text-info font-bold">Shift</a>
+			  </li>
+			  <li> 
+				<a href="/profile" class="btn-ghost text-info font-bold">Profile</a>
+			  </li>
+			  <form method="POST" action="/logout" class="btn btn-ghost text-info font-bold" on:submit={confirmLogout}>
 				<button type='submit' >Logout</button>
-			</form>
-		</div>
+			  </form>
+			</ul>
+		  </details>
+		</li>
+		{/if}
+	  </ul>
 	</div>
-</nav>
+  </nav>
 
 <div class="container mx-auto">
 	<slot />
