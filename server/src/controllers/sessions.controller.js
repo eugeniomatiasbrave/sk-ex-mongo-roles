@@ -1,61 +1,68 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import config from '../config/config.js';
-import PresentUserDTO from '../dto/user/PresentUserDTO.js';
-import { usersService} from "../services/repositories.js";
 import AuthService from "../services/AuthService.js";
-
+import { usersService } from "../managers/index.js";
 
 const SECRET_KEY = config.jwt.SECRET_KEY;
-const ADMIN_USER = config.app.ADMIN_USER;
-const ADMIN_PWD = config.app.ADMIN_PWD;
 
-const register = async (req,res)=>{ 
-	const { email, password, firstName, lastName, birthDate } = req.body;
+const register = async (req, res) => {
+    try {
+        const { email, name, password } = req.body;
 
-    let role = 'user';
-    if (email === ADMIN_USER && password === ADMIN_PWD) {
-        role = 'admin';
+        const authService = new AuthService();
+        const hashedPassword = await authService.hashPassword(password);
+
+        const newUser = {
+            email,
+            name,
+            password: hashedPassword
+        };
+
+        await usersService.createUser(newUser);
+        res.status(200).json({ status: "success", message: "Registered" });
+    } catch (error) {
+        res.status(500).json({ status: "error", message: "Registration failed", error: error.message });
     }
+};
 
-	const authService = new AuthService();
-    const hashedPassword = await authService.hashPassword(password);
-    const newUser = {
-        firstName,
-        lastName,
-        email,
-        birthDate,
-        password: hashedPassword,
-        role
-    };
+const login = async (req, res) => {
+    const { email, password } = req.body;
+    console.log(email, password); // ok llega el email y password
 
-    await usersService.createUser(newUser);
-    res.sendSuccess("Registered");
-}
+        const user = await usersService.getUserByEmail(email);
 
-const login = (req,res)=>{ 
-    console.log(req.user);
-	const sessionUser = new PresentUserDTO(req.user);
-	const token = jwt.sign(sessionUser.toObject(), SECRET_KEY ,{expiresIn:'15d'}); // convierto a sessionUser en un objeto plano
-	res.cookie('tokencito',token).send({status:"success",message:"logged in"});
-    console.log(token);
-}
+        if (!user) {
+            return res.status(401).json({ status: "error", message: "Invalid credentials" });
+        }
 
-const current = (req,res)=>{
-	if (!req.user) {
-		return res.status(401).send({ status: "error", error: "Not logged in" });
-	}
+        console.log('User email:', user.email);
 
-	const currentUser = new PresentUserDTO(req.user);
-    res.send(currentUser.toObject()); // convierto a currentUser en un objeto plano
-}
+        // Verificar la contraseña
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ status: "error", message: "Invalid credentials" });
+        }
 
-const logout = (req,res)=>{ 
-	res.clearCookie('tokencito').send({ status: "success", message: "logged out" });
-}
+        const token = jwt.sign({ email: user.email, name: user.name }, SECRET_KEY, { expiresIn: '1d' });
 
-export default { 
-	register,
-	login,
-	current,
-	logout
-}
+        res.cookie('token', token, { httpOnly: true, secure: true }).json({ status: "success", message: "logged in" });
+    
+};
+
+const logout = (req, res) => {
+    // Lógica para cerrar sesión
+};
+
+const current = (req, res) => {
+    // Lógica para obtener el usuario actual
+};
+
+
+
+export default {
+    register,
+    login,
+    current,
+    logout
+};

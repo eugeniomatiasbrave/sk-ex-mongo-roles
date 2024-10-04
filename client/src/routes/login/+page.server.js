@@ -1,56 +1,46 @@
-/*
-import { error, redirect } from '@sveltejs/kit';
-import { BASE_URL } from '$lib/utils.js';
-//import { date } from 'zod';
+import { error } from '@sveltejs/kit';
+
+const API_URL = process.env.VITE_API_URL;
 
 export const actions = {
-	default: async ({ cookies, request }) => {
-		const formData = await request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
+    default: async ({ cookies, request }) => {
+        try {
+            const formData = await request.formData();
+            const email = formData.get('email');
+            const password = formData.get('password');
 
-		try {
-			const res = await fetch(BASE_URL + '/usuarios/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					email: username,
-					clave: password
-				})
-			});
-			if (res.status === 200) {
-				const datos = await res.json();
-				cookies.set('AuthorizationToken', `Bearer ${datos.access_token}`, {
-					httpOnly: true,
-					path: '/',
-					secure: true,
-					sameSite: 'strict',
-					maxAge: 60 * 60 * 24 // 1 day
-				});
-				cookies.set(
-					'Usuario',
-					JSON.stringify({
-						usuario_id: datos.usuario_id,
-						nombre: datos.nombre
-					}),
-					{
-						httpOnly: true,
-						path: '/',
-						secure: true,
-						sameSite: 'strict',
-						maxAge: 60 * 60 * 24 // 1 day
-					}
-				);
-			} else {
-				return { success: false, message: 'Datos de acceso incorrectos' };
-			}
-		} catch (err) {
-			console.log('Error: ', err);
-			error(500, 'Something went wrong logging in');
-		}
+            if (!email || !password) {
+                return { success: false, error: 'Error Data' };
+            }
 
-		throw redirect(303, '/');
-	}
+            const login = { email, password };
+
+            const res = await fetch(`${API_URL}/sessions/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(login)
+            });
+
+            if (!res.ok) {
+                return { success: false, message: 'Datos de acceso incorrectos' };
+            }
+
+            const data = await res.json();
+
+            cookies.set('AuthorizationToken', `Bearer ${data.token}`, {
+                httpOnly: true,
+                path: '/',
+                secure: true,
+                sameSite: 'strict',
+                maxAge: 60 * 60 * 24 // 1 day
+            });
+
+            return { success: true };
+        } catch (err) {
+            console.error('Error: ', err);
+            throw error(500, 'Something went wrong logging in');
+        }
+    }
 };
-
-*/

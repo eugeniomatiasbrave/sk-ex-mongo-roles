@@ -9,5 +9,8 @@ export default {
     },
     mongo: {
         URL: process.env.MONGO_URL
+    },
+    jwt: {
+        SECRET_KEY: process.env.SECRET_KEY
     }
 };
