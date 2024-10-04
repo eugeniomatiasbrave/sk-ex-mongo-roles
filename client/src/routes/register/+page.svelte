@@ -51,7 +51,7 @@
 								confirmButtonText: "Aceptar",
 							}).then((result) => {
 								if (result.isConfirmed) {
-									goto("/register/confirm");
+									goto("/");
 								}
 							});
 						};
