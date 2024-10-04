@@ -7,7 +7,7 @@ export default class UserMangers {
     }
 
     getUserById(userId){
-        return usersModel.findOne(userId)
+        return usersModel.findOne({ _id: userId })
     }
    
     getUserByEmail(email){

@@ -18,7 +18,7 @@ export const actions = {
 			return fail(400, { password, missing: true });
 		}
 
-		const res = await fetch(`${API_URL}/session/register`, {
+		const res = await fetch(`${API_URL}/sessions/register`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -26,15 +26,17 @@ export const actions = {
 			body: JSON.stringify(body),
 		});
 
-		const data = await res.json();
-
-		if (!res.ok) {
-			return fail(res.status, data);
+		
+		if (res.status !== 200) {
+			const resBody = await res.json();
+			return fail(res.status, resBody);
 		}
 
-    return {
-        status: 200,
-        body: { message: "Register successful" }
-	};
-  }
+		const resBody = await res.json();
+	
+        return {
+           status: 200,
+           body: { message: "Register successful", data: resBody }
+	    };
+    }
 };
