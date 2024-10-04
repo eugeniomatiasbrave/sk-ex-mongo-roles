@@ -50,9 +50,9 @@ const login = async (req, res) => {
     
 };
 
-const logout = (req, res) => {
-    // Lógica para cerrar sesión
-};
+const logout = (req,res)=>{ 
+	res.clearCookie('tokencito').send({ status: "success", message: "logged out" });
+}
 
 const current = (req, res) => {
     // Lógica para obtener el usuario actual
