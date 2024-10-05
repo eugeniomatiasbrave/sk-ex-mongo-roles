@@ -28,8 +28,6 @@ export const actions = {
                 body: JSON.stringify(body)
             });
 
-            console.log('Res:', res);
-
             if (res.status === 200) {
                 // Obtener el token de la cookie
                 const setCookieHeader = res.headers.get('set-cookie');

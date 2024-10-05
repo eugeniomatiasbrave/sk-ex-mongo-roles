@@ -1,15 +1,17 @@
 
 export const load = async ({ locals, url }) => {
 	
-	if (locals.token) {
-
-		return {
-			token: locals.token,
-			url: url.parthname
-		};
+if (locals.user) {
+        return {
+            user: locals.user,
+            url: url.pathname
+        };
 		
 	} else {
-		return {};
+		return {
+			user: null,
+			url: url.pathname
+		};
 	}
 	
 };

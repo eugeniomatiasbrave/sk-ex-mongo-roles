@@ -4,6 +4,8 @@
 
 	export let data;
 
+	console.log('Layout nav:' , data);
+
 	const confirmLogout = (event) => {
         event.preventDefault();
         Swal.fire({
@@ -24,13 +26,33 @@
 
 </script>
 
+
 <nav class="navbar bg-base-100 border-b">
     <div class="flex-1">
       <a href="/" class="btn btn-ghost normal-case text-2xl text-info font-bold">ShiftSystem</a>
     </div>
     <div class="flex-none">
       <ul class="menu menu-horizontal">
-        {#if data.token !== undefined}
+      {#if data.user}
+        {#if data.user.role === 'admin'}
+		<li>
+            <details>
+                <summary class="btn-ghost text-info font-bold">Admin</summary>
+                <ul>
+				  <li>
+					<a href="/users" class="btn-ghost text-info font-bold">Users</a>
+				  </li>
+                  <li> 
+                    <a href="/dashboard" class="btn-ghost text-info font-bold">Dashboard</a>
+                  </li>
+                  <form method="POST" action="/logout" class="btn btn-ghost text-info font-bold" on:submit={confirmLogout}>
+                    <button type='submit'>Logout</button>
+                  </form>
+                </ul>
+            </details>
+          </li>
+          
+        {:else}
           <li>
             <details>
                 <summary class="btn-ghost text-info font-bold">Menu</summary>
@@ -42,15 +64,16 @@
                     <a href="/profile" class="btn-ghost text-info font-bold">Profile</a>
                   </li>
                   <form method="POST" action="/logout" class="btn btn-ghost text-info font-bold" on:submit={confirmLogout}>
-                    <button type='submit' >Logout</button>
+                    <button type='submit'>Logout</button>
                   </form>
                 </ul>
             </details>
           </li>
-        {:else}
-          <li><a href="/info" class="btn btn-ghost text-info font-bold">Info</a></li>
-          <li><a href="/login" class="btn btn-ghost text-info font-bold">Login</a></li>
         {/if}
+      {:else}
+        <li><a href="/info" class="btn btn-ghost text-info font-bold">Info</a></li>
+        <li><a href="/login" class="btn btn-ghost text-info font-bold">Login</a></li>
+      {/if}
       </ul>
     </div>
 </nav>
