@@ -44,21 +44,17 @@ const login = async (req, res) => {
             return res.status(401).json({ status: "error", message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ email: user.email, name: user.name }, SECRET_KEY, { expiresIn: '1d' });
-
-        res.cookie('token', token, { httpOnly: true, secure: true }).json({ status: "success", message: "logged in" });
-    
+        const token = jwt.sign( {email: user.email, name: user.name}, SECRET_KEY, { expiresIn: '1d' });
+        res.cookie('AuthorizationToken', token, { httpOnly: true, secure: true }).json({ status: "success", message: "logged in" });
+        console.log('Token Server:', token);
 };
 
 const logout = (req,res)=>{ 
-	res.clearCookie('tokencito').send({ status: "success", message: "logged out" });
+	res.clearCookie('AuthorizationToken').send({ status: "success", message: "logged out" });
 }
 
 const current = (req, res) => {
-    // Lógica para obtener el usuario actual
 };
-
-
 
 export default {
     register,
