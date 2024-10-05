@@ -2,7 +2,6 @@ import { redirect } from '@sveltejs/kit';
 
 export const handle = async ({ event, resolve }) => {
 	const token = event.cookies.get('AuthorizationToken');
-	console.log('cookies:', token);
 
 	if (event.route.id && event.route.id.includes('auth')) {
 	

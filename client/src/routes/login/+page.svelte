@@ -1,6 +1,6 @@
 <script>
     import { enhance } from "$app/forms";
-    import { goto } from "$app/navigation";
+    //import { goto } from "$app/navigation";
     import BackButton from "$lib/components/BackButton.svelte";
     import Swal from "sweetalert2";
 
@@ -32,7 +32,7 @@
                                     icon: 'success',
                                     confirmButtonColor: "#0a7399",
                                     confirmButtonText: 'Ok'
-                                }).then(() => { goto("/") });
+                                }).then(() => { window.location.href = "/"; });
                             } else {
                                 Swal.fire({
                                     title: 'Error!',
