@@ -38,7 +38,7 @@
 		<li>
             <details>
                 <summary class="btn-ghost text-info font-bold">Admin</summary>
-                <ul>
+                <ul class="rounded-lg mt-1">
 				  <li>
 					<a href="/users" class="btn-ghost text-info font-bold">Users</a>
 				  </li>
@@ -56,7 +56,7 @@
           <li>
             <details>
                 <summary class="btn-ghost text-info font-bold">Menu</summary>
-                <ul>
+                <ul class="rounded-lg">
                   <li>
                     <a href="/shift" class="btn btn-ghost text-info font-bold">Shift</a>
                   </li>
