@@ -8,13 +8,19 @@ import bcrypt from 'bcrypt';
 export const authenticateToken = async (req, res, next) => {
     const token = req.cookies.token || req.headers['x-access-token'];
 
-    if (!token) return res.status(403).json({ message: 'Access denied' });
-
     try {
-        const decoded = jwt.verify(token, config.jwt.SECRET_KEY);
-        req.userId = decoded.id;
 
-        const user = await usersService.getUserById(req.userId, { password: 0 });
+      if (!token) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+        const decoded = jwt.verify(token, config.jwt.SECRET_KEY);
+
+        req.userId = decoded.userId;
+
+        console.log('Decoded token:', decoded.userId);
+        
+        const user = await usersService.getUserById(req.userId);
+        console.log('User found:', user);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -23,6 +29,7 @@ export const authenticateToken = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
+      console.error('Token verification error:', err);
         return res.status(403).json({ message: 'Invalid token' });
     }
 }; // ahora podre verificar la existencia del toquen en rutas especificas como: /products..etc en cada endpoint que necesite verificar el token

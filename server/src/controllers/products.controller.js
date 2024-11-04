@@ -11,6 +11,7 @@
     }
 
 	const getProductById = async (req, res) => {
+
         try {
             const product = await productsService.getProductById(req.params.id);
             if (!product) {
@@ -23,8 +24,11 @@
     }
 
 	const createProduct = async (req, res) => {
+
+        const product = req.body;
+
         try {
-            const newProduct = await productsService.createProduct(req.body);
+            const newProduct = await productsService.createProduct(product);
             res.status(201).json(newProduct);
         } catch (err) {
             res.status(500).json({ message: 'Error creating product' });
