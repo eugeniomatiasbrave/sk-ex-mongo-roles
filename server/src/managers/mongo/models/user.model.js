@@ -1,4 +1,33 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+
+const collection = "Users";
+const schema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    roles: [
+      {
+        ref: "Role",
+        type: mongoose.Schema.Types.ObjectId,
+      },
+    ],
+  },
+  { versionKey: false, timestamps: true }
+);
+
+const userModel = mongoose.model(collection, schema);
+
+export default userModel;
 
 /* 
 Luego: repasar para implementar la relación entre usuarios y productos si los hubiera
@@ -9,34 +38,9 @@ Luego: repasar para implementar la relación entre usuarios y productos si los h
    Incorporar: Date.now
 */
 
-const collection = "Users";
-const schema = new mongoose.Schema({
-
-	name:{
-		type:String,
-		required:true
-	},
-	email: {
-		type:String,
-		required:true,
-	},
-	password: {
-		type:String,
-		required:true
-	},
-	role: {
-		type:String,
-		default:'user'       
-	}
-});
-
 /* 
 Populate: 
    schema.pre(['find','findOne'], function(){
 	 this.populate('cartId')
    })
 */
-
-const userModel = mongoose.model(collection, schema);
-
-export default userModel;

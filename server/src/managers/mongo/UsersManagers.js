@@ -11,10 +11,14 @@ export default class UserMangers {
     }
    
     getUserByEmail(email){
-        return usersModel.findOne({email});
+        return usersModel.findOne({email}).populate("roles");
     }
   
     createUser(user){
         return usersModel.create(user);
+    }
+
+    updateUser(userId, updateData) {
+        return usersModel.updateOne({ _id: userId }, { $set: updateData });
     }
 }

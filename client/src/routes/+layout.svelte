@@ -34,14 +34,14 @@
     <div class="flex-none">
       <ul class="menu menu-horizontal">
       {#if data.user}
-        {#if data.user.role === 'admin'}
-		<li>
+        {#if data.isAdmin}
+		     <li>
             <details>
                 <summary class="btn-ghost text-info font-bold">Admin</summary>
                 <ul class="rounded-lg mt-1">
-				  <li>
-					<a href="/users" class="btn-ghost text-info font-bold">Users</a>
-				  </li>
+				     <li>
+					    <a href="/users" class="btn-ghost text-info font-bold">Users</a>
+				     </li>
                   <li> 
                     <a href="/dashboard" class="btn-ghost text-info font-bold">Dashboard</a>
                   </li>
@@ -52,13 +52,28 @@
             </details>
           </li>
           
+        {:else if data.isModerator}    
+        <li>
+          <details>
+              <summary class="btn-ghost text-info font-bold">Moderator</summary>
+              <ul class="rounded-lg mt-1">
+                <li>
+                 <a href="/control" class="btn-ghost text-info font-bold">Control</a>
+                </li>
+                <form method="POST" action="/logout" class="btn btn-ghost text-info font-bold" on:submit={confirmLogout}>
+                  <button type='submit'>Logout</button>
+                </form>
+              </ul>
+          </details>
+        </li>
+
         {:else}
           <li>
             <details>
                 <summary class="btn-ghost text-info font-bold">Menu</summary>
                 <ul class="rounded-lg">
                   <li>
-                    <a href="/shift" class="btn btn-ghost text-info font-bold">Shift</a>
+                    <a href="/products" class="btn btn-ghost text-info font-bold">Shift</a>
                   </li>
                   <li> 
                     <a href="/profile" class="btn-ghost text-info font-bold">Profile</a>

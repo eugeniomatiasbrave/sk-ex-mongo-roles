@@ -14,14 +14,22 @@ export const handle = async ({ event, resolve }) => {
 	if (token) {
         const decodedToken = jwt.decode(token);
         event.locals.user = decodedToken;
-        event.locals.isAdmin = decodedToken.role === 'admin';
+        event.locals.isAdmin = decodedToken.role[0].name === 'admin';
+        event.locals.isModerator = decodedToken.role[0].name === 'moderator';
         console.log('ok hook:', event.locals);
     }
 
     const user = event.locals.user;
+    
 
     if (event.url.pathname.startsWith('/admin')) {
-        if (!user || user.role !== 'admin') {
+        if (!user || user.role[0].name !== 'admin') {
+            throw redirect(303, '/login');
+        }
+    }
+
+    if (event.url.pathname.startsWith('/moderator')) {
+        if (!user || user.role[0].name !== 'moderator') {
             throw redirect(303, '/login');
         }
     }

@@ -3,21 +3,14 @@ import bcrypt from 'bcrypt';
 import config from '../config/config.js';
 import AuthService from "../services/AuthService.js";
 import { usersService } from "../managers/index.js";
-
+import roleModel from '../managers/mongo/models/role.model.js';
 
 const SECRET_KEY = config.jwt.SECRET_KEY;
-const ADMIN_USER = config.app.ADMIN_USER;
-const ADMIN_PWD = config.app.ADMIN_PWD;
 
 const register = async (req, res) => {
+    const { email, name, password } = req.body;
+
     try {
-        const { email, name, password } = req.body;
-
-        let role = 'user';
-        if (email === ADMIN_USER && password === ADMIN_PWD) {
-           role = 'admin';
-        }
-
         const authService = new AuthService();
         const hashedPassword = await authService.hashPassword(password);
 
@@ -25,13 +18,33 @@ const register = async (req, res) => {
             email,
             name,
             password: hashedPassword,
-            role
         };
 
-        await usersService.createUser(newUser);
-        res.status(200).json({ status: "success", message: "Registered" });
+         // Check if the email and password match the admin credentials
+         if (email === config.admin.EMAIL && password === config.admin.PASSWORD) {
+            const adminRole = await roleModel.findOne({ name: 'admin' });
+            newUser.roles = [adminRole._id];
+        } 
+        // Check if the email and password match the moderator credentials
+        else if (email === config.moderator.EMAIL && password === config.moderator.PASSWORD) {
+            const moderatorRole = await roleModel.findOne({ name: 'moderator' });
+            newUser.roles = [moderatorRole._id];
+        } 
+        // Default role assignment
+        else {
+            const userRole = await roleModel.findOne({ name: 'user' });
+            newUser.roles = [userRole._id];
+        }
+
+        const createdUser = await usersService.createUser(newUser);
+
+        const token = jwt.sign({ id: createdUser._id }, SECRET_KEY, {
+            expiresIn: 86400, // 24 hours
+        });
+
+        res.status(201).json({ token });
     } catch (error) {
-        res.status(500).json({ status: "error", message: "Registration failed", error: error.message });
+        res.status(500).json({ message: 'Error registering user', error });
     }
 };
 
@@ -53,7 +66,7 @@ const login = async (req, res) => {
             return res.status(401).json({ status: "error", message: "Invalid credentials" });
         }
 
-        const token = jwt.sign( {email: user.email, name: user.name, role: user.role }, SECRET_KEY, { expiresIn: '1d' });
+        const token = jwt.sign( {email: user.email, name: user.name, role: user.roles }, SECRET_KEY, { expiresIn: '1d' });
         res.cookie('AuthorizationToken', token, { httpOnly: true, secure: true }).json({ status: "success", message: "logged in" });
         console.log('Token Server:', token);
 };
